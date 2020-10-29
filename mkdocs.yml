@@ -1,0 +1,5 @@
+site_name: Error Reporting Service (ERS)
+nav:
+  - Home: index.md
+  - Manual: manual.md
+theme: readthedocs
