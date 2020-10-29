@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Manual - Error Reporting Service (ERS)</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Manual";
+    var mkdocs_page_input_path = "manual.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Error Reporting Service (ERS)</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Manual</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#header-file">Header File</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#assertion-macro">Assertion Macro</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#logging-macro">Logging Macro</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#using-custom-issue-classes">Using Custom Issue Classes</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#ers_here-macro">ERS_HERE macro</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#exception-handling">Exception Handling</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuring-ers-streams">Configuring ERS Streams</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#existing-stream-implementations">Existing Stream Implementations</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#custom-stream-implementation">Custom Stream Implementation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#implementing-a-custom-stream">Implementing a Custom Stream</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#registering-a-custom-stream">Registering a Custom Stream</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#using-custom-stream">Using Custom Stream</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#error-reporting-in-multi-threaded-applications">Error Reporting in Multi-threaded Applications</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#setting-up-an-error-catcher">Setting up an Error Catcher</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#receiving-issues-across-application-boundaries">Receiving Issues Across Application Boundaries</a>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Error Reporting Service (ERS)</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Manual</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="error-reporting-service-ers">Error Reporting Service (ERS)</h1>
+<p>The Error Reporting System (ERS) software package provides a common API for error reporting
+in the ATLAS TDAQ system. ERS offers several macro that can be used for reporting pre-defined 
+errors if some conditions are violated at the level of C++ code. ERS also provides tools for 
+defining custom classes that can be used for reporting high-level issues.</p>
+<p>The Error Reporting System (ERS) software package provides a common API for error reporting
+in the ATLAS TDAQ system.
+ERS offers several macro that can be used for reporting pre-defined errors if some
+conditions are violated at the level of C++ code. ERS also provides tools for defining
+custom classes that can be used for reporting high-level issues.</p>
+<h2 id="header-file">Header File</h2>
+<p>In order to use ERS functionality an application has to include a single header file <strong>ers/ers.h</strong></p>
+<h2 id="assertion-macro">Assertion Macro</h2>
+<p>ERS provides several convenience macro for checking conditions in a C++ code. If a certain condition
+is violated a corresponding macro creates a new instance of <strong>ers::Assertion</strong> class and sends it to
+the <strong>ers::fatal</strong> stream. Further processing depends on the <strong>ers::fatal</strong> stream configuration.
+By default the issue is printed to the standard error stream.</p>
+<p>Here is a list of available macro:
+ * <strong>ERS_ASSERT( expression )</strong> generic macro that checks whether a given expression is valid.
+ * <strong>ERS_PRECONDITION( expression )</strong> the same as ERS_ASSERT but uses a message that is adopted
+for reporting an invalid input parameter for a function.
+ * <strong>ERS_RANGE_CHECK( min, val, max )</strong> is a special type of pre-condition, which checks that a value
+is in a range between min and max values. 
+ * <strong>ERS_STRICT_RANGE_CHECK( min, val, max )</strong> is similar to the ERS_RANGE_CHECK
+but does not allow the checked value to be equal to either min or max values. </p>
+<blockquote>
+<p><strong>Note:</strong> These macro are defined to empty statements if <strong>ERS_NO_DEBUG</strong> macro is defined at compilation time.</p>
+</blockquote>
+<h2 id="logging-macro">Logging Macro</h2>
+<p>ERS package offers a set of macro for infromation logging:
+ * <strong>ERS_DEBUG( level, message )</strong> - sends ers::Message issue to the ers::debug stream
+ * <strong>ERS_LOG( message )</strong> - sends ers::Message issue to the ers::log stream
+ * <strong>ERS_INFO( message )</strong> - sends ers::Message issue to the ers::information stream</p>
+<blockquote>
+<p><strong>Note:</strong> ERS_DEBUG macro is defined to empty statement if <strong>ERS_NO_DEBUG</strong> macro is defined at compilation time.</p>
+</blockquote>
+<p>Each of these macro constructs an new issue of ers::Message time and sends it to an appropriate stream.
+The <strong>message</strong> argument of these macro can be any value, for which the standard C++ output stream operator
+(<strong>operator&lt;&lt;</strong>) is defined. This means that the message can be a single value of a certain type as well
+as a sequence of output operations of any supported types.
+For example:</p>
+<pre><code class="language-cpp">ERS_DEBUG( 1, &quot;simple debug output &quot; &lt;&lt; 123 &lt;&lt; &quot; that shows how to use debug macro&quot; )
+</code></pre>
+<p>The actual behavior of these macro depends on the configuration of a respective stream.
+Debug macro can be disabled at run-time by defining the <strong>TDAQ_ERS_DEBUG_LEVEL</strong> environment 
+variable to the highest possible debug level.
+For instance, if <strong>TDAQ_ERS_DEBUG_LEVEL</strong> is set to N, then <strong>ERS_DEBUG( M, ... )</strong> where <strong>M &gt; N</strong>
+will not produce any output. The default value for the <strong>TDAQ_ERS_DEBUG_LEVEL</strong> is 0. Negative
+debug levels are also allowed.</p>
+<p>The amount of information, which is printed for an issue depends on the actual ERS verbosity level,
+which can be controlled via the <strong>TDAQ_ERS_VERBOSITY_LEVEL</strong> macro. Default verbosity level is zero.
+In this case the following information is reported for any issue:
+ * severity (DEBUG, LOG, INFO, WARNING, ERROR, FATAL)
+ * the time of the issue occurrence
+ * the issue's context, which includes package name, file name, function name and line number
+ * the issue's message</p>
+<p>One can control the current verbosity level via the <strong>TDAQ_ERS_VERBOSITY_LEVEL</strong> macro:</p>
+<pre><code>export TDAQ_ERS_VERBOSITY_LEVEL=N
+</code></pre>
+<p>where N must be an integer number.</p>
+<ul>
+<li>For N &gt; 0 the issue attributes names and values are reported in addition to 0-level data</li>
+<li>For N &gt; 1 the following information is added to the issue:<ul>
+<li>host name</li>
+<li>user name</li>
+<li>process id</li>
+<li>process current working directory</li>
+</ul>
+</li>
+<li>For N &gt; 2 a stack trace is added to each issue if the code was compiled without <strong>ERS_NO_DEBUG</strong> macro.</li>
+</ul>
+<h2 id="using-custom-issue-classes">Using Custom Issue Classes</h2>
+<p>ERS assumes that user functions should throw exceptions in case of errors. If such exceptions
+are instances of classes, which inherit the <strong>ers::Issue</strong> one, ERS offers a number of advantages with 
+respect to their handling:
+ * ERS issues can be reported to any ERS stream
+ * One can create chains of issues to preserve the original cause of the problem as well as the error handling sequence
+ * ERS issues can be printed to a standard C++ output stream using the output operator provided by ERS</p>
+<p>In order to define a custom issue one has to do the following steps:
+ * Declare a class, which inherits <strong>ers::Issue</strong>
+ * Implement 3 pure virtual functions, declared in the ers:Issue class
+ * Register new class using the <strong>ers::IssueFactory::register_issue</strong> function</p>
+<p>ERS defines two helper macro, which implement all these steps. The macro are called ERS_DECLARE_ISSUE
+and ERS_DECLARE_ISSUE_BASE. The first one should be used to declare an issue class that inherits
+from the <strong>ers::Issue</strong> as it is shown on the following example:</p>
+<pre><code class="language-cpp">ERS_DECLARE_ISSUE(
+ers,                                                              // namespace
+    Assertion,                                                    // issue name
+    &quot;Assertion (&quot; &lt;&lt; condition &lt;&lt; &quot;) failed because &quot; &lt;&lt; reason,  // message
+    ((const char *)condition )                                    // first attribute
+    ((const char *)reason )                                       // second attribute
+)
+</code></pre>
+<p>Note that attribute names may appear in the message expression. Also note a special
+syntax of the attributes declaration, which must always be declared using a list of 
+<strong>((attribute_type)attribute_name)</strong> tokens.
+All the brackets in this expression are essential. Do not use commas to separate attributes.
+The only requirement for the type of an issue attribute is that for this type must be defined the output
+operator to the standard C++ output stream and the input operator from the standard C++ input
+stream. It is important to note that these operators must unambiguously match each other, i.e.
+the input operator must be able to unambiguously restore the state of the attribute from a stream,
+which had been used to save the object's state with the output operator. Evidently all the
+built-in C++ types satisfy this criteria.
+The result of the <strong>ERS_DECLARE_ISSUE</strong> macro expansion would look like:</p>
+<pre><code class="language-cpp">namespace ers {
+    class Assertion : public ers::Issue {
+        template &lt;class&gt; friend class ers::IssueRegistrator;
+        Assertion() { ; }
+
+        static const char * get_uid() { return &quot;ers::Assertion&quot;; }
+
+        virtual void raise() const throw( std::exception ) { throw *this; }
+        virtual const char * get_class_name() const { return get_uid(); }
+        virtual ers::Issue * clone() const { return new ers::Assertion( *this ); }
+
+    public:
+        Assertion( const ers::Context &amp; context , const char * condition , const char * reason )
+            : ers::Issue( context ) {
+            set_value( &quot;condition&quot;, condition );
+            set_value( &quot;reason&quot;, reason );
+            std::ostringstream out;
+            out &lt;&lt; &quot;Assertion (&quot; &lt;&lt; condition &lt;&lt; &quot;) failed because &quot; &lt;&lt; reason;
+            set_message( out.str() );
+        }
+
+        Assertion( const ers::Context &amp; context, const std::string &amp; msg , const char * condition , const char * reason )
+            : ers::Issue( context, msg ) {
+            set_value( &quot;condition&quot;, condition );
+            set_value( &quot;reason&quot;, reason );
+        }
+
+        Assertion( const ers::Context &amp; context , const char * condition , const char * reason , const std::exception &amp; cause )
+            : ers::Issue( context, cause ) {
+            set_value( &quot;condition&quot;, condition );
+            set_value( &quot;reason&quot;, reason );
+            std::ostringstream out;
+            out &lt;&lt; &quot;Assertion (&quot; &lt;&lt; condition &lt;&lt; &quot;) failed because &quot; &lt;&lt; reason;
+            set_message( out.str() );
+        }
+
+        const char * get_condition () {
+            const char * val;
+            get_value( &quot;condition&quot;, val );
+            return val;
+        }
+
+        const char * get_reason () {
+            const char * val;
+            get_value( &quot;reason&quot;, val );
+            return val;
+        }
+    };
+}
+</code></pre>
+<p>The macro <strong>ERS_DECLARE_ISSUE_BASE</strong> has to be used if one wants to declare a new issue class,
+which inherits from one of the other custom ERS issue classes. For example, the following class
+inherits from the <strong>ers::Assertion</strong> class defined above:</p>
+<pre><code class="language-cpp">ERS_DECLARE_ISSUE_BASE(ers,                                          // namespace name
+      Precondition,                                                  // issue name
+      ers::Assertion,                                                // base issue name
+      &quot;Precondition (&quot; &lt;&lt; condition &lt;&lt; &quot;) located in &quot; &lt;&lt; location
+    &lt;&lt; &quot; failed because &quot; &lt;&lt; reason,                                 // message
+      ((const char *)condition ) ((const char *)reason ),            // base class attributes
+       ((const char *)location )                                     // this class attributes
+)
+</code></pre>
+<p>The result of the <strong>ERS_DECLARE_ISSUE_BASE</strong> macro expansion looks like:</p>
+<pre><code class="language-cpp">namespace ers {
+    class Precondition : public ers::Assertion {
+        template &lt;class&gt; friend class ers::IssueRegistrator;
+        Precondition() { ; }
+
+        static const bool registered = ers::IssueRegistrator&lt; ers::Precondition &gt;::instance.done;
+        static const char * get_uid() { return &quot;ers::Precondition&quot;; }
+
+        virtual void raise() const throw( std::exception ) { throw *this; }
+        virtual const char * get_class_name() const { return get_uid(); }
+        virtual ers::Issue * clone() const { return new ers::Precondition( *this ); }
+
+    public:
+        Precondition( const ers::Context &amp; context , const char * condition , const char * reason, const char * location )
+            : ers::Assertion( context, condition, reason ) {
+                set_value( &quot;location&quot;, location );
+            std::ostringstream out;
+            out &lt;&lt; &quot;Precondition (&quot; &lt;&lt; condition &lt;&lt; &quot;) located in &quot; &lt;&lt; location &lt;&lt; &quot;) failed because &quot; &lt;&lt; reason;
+            set_message( out.str() );
+        }
+
+        Precondition( const ers::Context &amp; context, const std::string &amp; msg , const char * condition , const char * reason, const char * location )
+            : ers::Assertion( context, msg, condition, reason ) {
+            set_value( &quot;location&quot;, location );
+        }
+
+        Precondition( const ers::Context &amp; context , const char * condition , const char * reason , const char * location, const std::exception &amp; cause )
+            : ers::Assertion( context, condition, reason, cause ) {
+            set_value( &quot;location&quot;, location );
+            std::ostringstream out;
+            out &lt;&lt; &quot;Precondition (&quot; &lt;&lt; condition &lt;&lt; &quot;) located in &quot; &lt;&lt; location &lt;&lt; &quot;) failed because &quot; &lt;&lt; reason;
+            set_message( out.str() );
+        }
+
+        const char * get_location () {
+            const char * val;
+            get_value( &quot;location&quot;, val );
+            return val;
+        }
+    };
+}
+</code></pre>
+<h2 id="ers_here-macro">ERS_HERE macro</h2>
+<p>The macro ERS_HERE is a convenience macro that is used to add the context information, like the file name,
+the line number and the signature of the function where the issue was constructed, to the new issue object.
+This means that when a new issue is created one shall always use ERS_HERE macro as the first parameter of the
+issue constructor.</p>
+<h2 id="exception-handling">Exception Handling</h2>
+<p>Functions, which can throw exceptions must be invoked inside <strong>try...catch</strong> statement.
+The following example shows a typical use case of handling ERS exceptions.</p>
+<pre><code class="language-cpp">#include &lt;ers/SampleIssues.h&gt;
+
+    try {
+        foo( );
+    }
+    catch ( ers::PermissionDenied &amp; ex ) {
+        ers::CantOpenFile issue( ERS_HERE, ex.get_file_name(), ex );
+        ers::warning( issue );
+    }
+    catch ( ers::FileDoesNotExist &amp; ex ) {
+        ers::CantOpenFile issue( ERS_HERE, ex.get_file_name(), ex );
+        ers::warning( issue );
+    }
+    catch ( ers::Issue &amp; ex ) {
+        ERS_DEBUG( 0, &quot;Unknown issue caught: &quot; &lt;&lt; ex )
+        ers::error( ex );
+    }
+    catch ( std::exception &amp; ex ) {
+        ers::CantOpenFile issue( ERS_HERE, &quot;unknown&quot;, ex );
+        ers::warning( issue );
+    }
+</code></pre>
+<p>This example demonstrates the main features of the ERS API:
+ * An issue does not have severity by itself. Severity of the issue is defined by the stream to which this issue is reported.
+ * An issue can be send to one of the existing ERS streams using one of the following functions:
+ers::debug, ers::info, ers::warning, ers::error, ers::fatal
+ * Any ERS issue has a constructor, which accepts another issue as its last parameter. If this
+constructor is used the new issue will hold the copy of the original one and will report it as its cause.
+ * Any ERS issue has a constructor, which accepts std::exception issue as its last parameter.
+    If it is used the new issue will hold the copy of the given std::exception one and will report it as its cause.</p>
+<h2 id="configuring-ers-streams">Configuring ERS Streams</h2>
+<p>The ERS system provides multiple instances of the stream API, one per severity level, to report issues.
+The issues which are sent to different streams may be forwarded to different destinations depending on a
+particular stream configuration. By default the ERS streams are configured in the following way:
+ * ers::debug - "lstdout" - prints issues to the standard C++ output stream
+ * ers::log - "lstdout" - prints issues to the standard C++ output stream
+ * ers::info - "throttle,lstdout" - prints throttled issues to the standard C++ output stream
+ * ers::warning - "throttle,lstderr" - prints throttled issues to the standard C++ error stream
+ * ers::error - "throttle,lstderr" - prints throttled issues to the standard C++ error stream
+ * ers::fatal - "lstderr" - prints issues to the standard C++ error stream</p>
+<blockquote>
+<p><strong>Note:</strong> the letter "l" at the beginning of "lstdout" and "lstderr" names indicates that these stream
+implementations are thread-safe and can be safely used in multi-threaded applications so that
+issues reported from different threads will not be mixed up in the output.</p>
+</blockquote>
+<p>In order to change the default configuration for an ERS stream one should use
+the <strong>TDAQ_ERS_<SEVERITY></strong> environment variable. For example the following command:</p>
+<pre><code>export TDAQ_ERS_ERROR=&quot;lstderr,throw&quot; 
+</code></pre>
+<p>will cause all the issues, which are sent to the ers::error stream, been printed to 
+the standard C++ error stream and then been thrown using the C++ throw operator.</p>
+<p>A filter stream can also be associated with any severity level. For example:</p>
+<pre><code>export TDAQ_ERS_ERROR=&quot;lstderr,filter(ipc),throw&quot; 
+</code></pre>
+<p>The difference with the previous configuration is that only errors, which have "ipc" qualifier
+will be passed to the "throw" stream. Users can add any qualifiers to their specific issues
+by using the <strong>Issue::add_qualifier</strong> function. By default every issue has one qualifier associated
+with it - the name of the TDAQ software package, which builds the binary (a library or an application)
+where the issue object is constructed.</p>
+<p>One can also define complex and reversed filters like in the following example:</p>
+<pre><code>&gt; export TDAQ_ERS_ERROR=&quot;lstderr,filter(!ipc,!is),throw&quot;
+</code></pre>
+<p>This configuration will throw all the errors, which come neither from "ipc" nor from "is" TDAQ packages.</p>
+<h3 id="existing-stream-implementations">Existing Stream Implementations</h3>
+<p>ERS provides several stream implementations which can be used in any combination in ERS streams configurations.
+Here is the list of available stream implementations:
+ * "stdout" - prints issues to the standard C++ output stream. It is not thread-safe.
+ * "stderr" - prints issues to the standard C++ error stream. It is not thread-safe.
+ * "lstdout" - prints issues to the standard C++ output stream. It is thread-safe.
+ * "lstderr" - prints issues to the standard C++ error stream. It is thread-safe.
+ * "lock" - locks a global mutex for the duration of reporting an issue to the next streams in the given configuration.
+This stream can be used for adding thread-safety to an arbitrary non-thread-safe stream implementation. For example
+"lock,stdout" configuration is equivalent to "lstdout".
+ * "null" - silently drop any reported issue.
+ * "throw" - apply the C++ throw operator to the reported issue
+ * "abort" - calls abort() function for any issue reported
+ * "exit" - calls exit() function for any issue reported
+ * "filter(A,B,!C,...)" - pass through only issues, which have either A or B and don't have C qualifier
+ * "rfilter(RA,RB,!RC,...)" - the same as "filter" stream but treats all the given parameters as regular expressions.
+ * "throttle(initial_threshold, time_interval)" - rejects the same issues reported within the <strong>time_interval</strong> after
+passing through the <strong>initial_threshold</strong> number of them.</p>
+<h2 id="custom-stream-implementation">Custom Stream Implementation</h2>
+<p>While ERS provides a set of basic stream implementations one can also implement a custom one if this is required.
+Custom streams can be plugged into any existing application which is using ERS without recompiling this application.</p>
+<h3 id="implementing-a-custom-stream">Implementing a Custom Stream</h3>
+<p>In order to provide a new custom stream implementation one has to declare a sub-class of the ers::OutputStream
+class and implement its pure virtual method called <strong>write</strong>. Here is an example of how this is done by the 
+FilterStream stream implementation:</p>
+<pre><code class="language-cpp">void
+ers::FilterStream::write( const ers::Issue &amp; issue )
+{
+    if ( is_accepted( issue ) ) {
+        chained().write( issue );
+    }
+}
+</code></pre>
+<p>An implementation of the <strong>ers::OutputStream::write</strong> function must decide whether to pass the given
+issue to the next stream in the chain or not. If a custom stream does not provide any filtering
+functionality then it shall always pass the input message to the next stream by using the
+<strong>chained().write( issue )</strong> code.</p>
+<h3 id="registering-a-custom-stream">Registering a Custom Stream</h3>
+<p>In order to register and use a custom ERS stream implementation one can use a dedicated macro called
+<strong>ERS_REGISTER_STREAM</strong> in the following way:</p>
+<pre><code>ERS_REGISTER_OUTPUT_STREAM( ers::FilterStream, &quot;filter&quot;, format )
+</code></pre>
+<p>The first parameter of this macro is the name of the class which implements the new stream; the second one
+gives a new stream name to be used in ERS stream configurations (this is the name which one can put to the
+<strong>TDAQ_ERS_<SEVERITY></strong> environment variables); and the last parameter is a placeholder for the stream class
+constructor parameters. If the constructor of the new custom stream does not require parameters then last
+field of this macro should be left empty.</p>
+<h3 id="using-custom-stream">Using Custom Stream</h3>
+<p>In order to use a custom stream one has to build a new shared library from the class that implements this stream
+and pass this library to ERS by setting its name to the <strong>TDAQ_ERS_STREAM_LIBS</strong> environment variable.
+For example if this macro is set to the following value:</p>
+<pre><code>export  TDAQ_ERS_STREAM_LIBS=MyCustomFilter
+</code></pre>
+<p>then ERS will be looking for the libMyCustomFilter.so library in all the directories which appear in the 
+<strong>LD_LIBRARY_PATH</strong> environment variable.</p>
+<h2 id="error-reporting-in-multi-threaded-applications">Error Reporting in Multi-threaded Applications</h2>
+<p>ERS can be used for error reporting in multi-threaded applications. As C++ language does not provide a way of
+passing exceptions across thread boundaries, ERS provides the <strong>ers::set_issue_catcher</strong> function to overcome this
+limitation.
+When one of the threads of a software application catches an issue it can send it to one of the the ERS
+streams using <strong>ers::error,</strong> <strong>ers::fatal</strong> or <strong>ers::warning</strong> functions. If no error catcher thread is installed
+in this application the new issue will be forwarded to the respective ERS stream implementations according to the
+stream configuration. Otherwise if a custom issue catcher is installed the issue will be passed to the dedicated
+thread which will call the custom error catcher function.</p>
+<h3 id="setting-up-an-error-catcher">Setting up an Error Catcher</h3>
+<p>An error catcher should be installed by calling the <strong>ers::set_issue_catcher</strong> function and passing
+it a function object as parameter. This function object will be executed in the context of a dedicated
+thread (created by the <strong>ers::set_issue_catcher</strong> function) for every issue which is reported by the current
+application to ers::fatal, ers::error and ers::warning streams.
+The parameter of the ers::set_issue_catcher is of the **std::function<void** ( const ers::Issue & )> type
+which allows to use plain C-style functions as well as C++ member functions for implementing a custom error
+catcher. For example one can define an error catcher as a member function of a certain class:</p>
+<pre><code class="language-cpp">struct IssueCatcher {
+   void handler( const ers::Issue &amp; issue ) {
+      std::cout &lt;&lt; &quot;IssueCatcher has been called: &quot; &lt;&lt; issue &lt;&lt; std::endl;
+   }
+};
+</code></pre>
+<p>This error catcher can be registered with ERS in the following way:</p>
+<pre><code class="language-cpp">IssueCatcher * catcher = new IssueCatcher();
+ers::IssueCatcherHandler * handler;
+try {
+    handler = ers::set_issue_catcher( std::bind( &amp;IssueCatcher::handler, catcher, std::placeholders::_1 ) );
+}
+catch(ers::IssueCatcherAlreadySet &amp; ex){
+    ...
+}
+</code></pre>
+<p>Note that the error handling catcher can be set only once for the lifetime of an application. 
+An attempt to set it again will fail and the <strong>ers::IssueCatcherAlreadySet</strong> exception will be thrown.</p>
+<p>To unregister a previously installed issue catcher one need to destroy the handler that is returned by
+the <strong>ers::set_issue_catcher</strong> function using <strong>delete</strong> operator:</p>
+<pre><code class="language-cpp">delete handler;
+</code></pre>
+<h2 id="receiving-issues-across-application-boundaries">Receiving Issues Across Application Boundaries</h2>
+<p>There is a specific implementation of ERS input and output streams which allows to exchange issue
+across application boundaries, i.e. one process may receive ERS issues produces by another processes.
+The following example shows how to do that:</p>
+<pre><code class="language-cpp">#include &lt;ers/InputStream.h&gt;
+#include &lt;ers/ers.h&gt;
+
+struct MyIssueReceiver : public ers::IssueReceiver {
+    void receive( const ers::Issue &amp; issue ) {
+        std::cout &lt;&lt; issue &lt;&lt; std::endl;
+    }
+};
+
+MyIssueReceiver * receiver = new MyIssueReceiver;
+try {
+    ers::StreamManager::instance().add_receiver( &quot;mts&quot;, &quot;*&quot;, receiver );
+}
+catch( ers::Issue &amp; ex ) {
+    ers::fatal( ex );
+}
+</code></pre>
+<p>The MyIssueReceiver instance will be getting all messages, which are sent to the "mts" stream implementation
+by all applications working in the current TDAQ partition whose name will be taken from the <strong>TDAQ_PARTITION</strong> 
+environment variable. Alternatively one may pass partition name explicitly via the "mts" stream parameters list:</p>
+<pre><code class="language-cpp">MyIssueReceiver * receiver = new MyIssueReceiver;
+try {
+    ers::StreamManager::instance().add_receiver( &quot;mts&quot;, {&quot;my partition name&quot;, &quot;*&quot;}, receiver );
+}
+catch( ers::Issue &amp; ex ) {
+    ers::fatal( ex );
+}
+</code></pre>
+<p>To cancel a previously made subscription one should use the <strong>ers::StreamManager::remove_receiver</strong> function 
+and giving it a pointer to the corresponding receiver object, e.g.:</p>
+<pre><code class="language-cpp">try {
+    ers::StreamManager::instance().remove_receiver( receiver );
+}
+catch( ers::Issue &amp; ex ) {
+    ers::error( ex );
+}
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
