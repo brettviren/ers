@@ -1,5 +1,14 @@
 site_name: Error Reporting Service (ERS)
+site_description: The Error Reporting System (ERS) software package provides a common API for error reporting in the ATLAS TDAQ system and others.
+
 nav:
   - Home: index.md
   - Manual: manual.md
 theme: readthedocs
+repo_name: ERS
+# fixme: change these once dune-daq is set up
+site_url: https://brettviren.github.io/ers
+repo_url: https://github.com/brettviren/ers
+
+docs_dir: doc
+site_dir: docs
